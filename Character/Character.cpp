@@ -1,4 +1,12 @@
+//
+// Created by Victor Navarro on 15/02/24.
+//
+
 #include "Character.h"
+#include <map>
+#include <any>
+
+using namespace std;
 
 Character::Character(string _name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _defenseMode)
 {
@@ -11,45 +19,18 @@ Character::Character(string _name, int _health, int _attack, int _defense, int _
     defenseMode = _defenseMode;
 }
 
-string Character::getName()
+map<string, any> Character::getData()
 {
-    return name;
-}
+    map<string, any> data;
+    data["name"] = name;
+    data["health"] = health;
+    data["attack"] = attack;
+    data["defense"] = defense;
+    data["speed"] = speed;
+    data["isPlayer"] = isPlayer;
+    data["defenseMode"] = defenseMode;
 
-int Character::getHealth()
-{
-    return health;
-}
-
-int Character::getMaxHealth()
-{
-    // Valor predefinido
-    return 100;
-}
-
-int Character::getAttack()
-{
-    return attack;
-}
-
-int Character::getDefense()
-{
-    return defense;
-}
-
-int Character::getSpeed()
-{
-    return speed;
-}
-
-string Character::toString()
-{
-    return "Name: " + name + "\nHealth: " + to_string(health) + "\nAttack: " + to_string(attack) + "\nDefense: " + to_string(defense) + "\nSpeed: " + to_string(speed);
-}
-
-bool Character::getIsPlayer()
-{
-    return isPlayer;
+    return data;
 }
 
 bool Character::flee(Character *target)
@@ -61,12 +42,10 @@ bool Character::flee(Character *target)
     return chance > 30;
 }
 
-bool Character::defend()
+bool Character::canDefend()
 {
     if (defenseMode == 0)
     {
-        defenseMode = 2;
-        defense = static_cast<int>(defense * 1.2);
         return true;
     }
     else
@@ -75,9 +54,10 @@ bool Character::defend()
     }
 }
 
-int Character::getDefenseMode()
+void Character::defend()
 {
-    return defenseMode;
+    defenseMode = 2;
+    defense = static_cast<int>(defense * 1.2);
 }
 
 void Character::nerfDefenseMode()

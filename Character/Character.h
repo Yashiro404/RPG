@@ -5,6 +5,8 @@
 #ifndef RPG_CHARACTER_H
 #define RPG_CHARACTER_H
 #include <string>
+#include <map>
+#include <any>
 
 using namespace std;
 
@@ -17,7 +19,7 @@ protected:
     int defense;
     int speed;
     bool isPlayer;
-    bool defenseMode;
+    int defenseMode;
 
 public:
     Character(string _name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _defenseMode);
@@ -25,20 +27,11 @@ public:
     virtual void doAttack(Character *target) = 0;
     virtual void takeDamage(int damage) = 0;
 
-    // TODO: Implementar metodo de defensa
-    // Incrementar la defensa un 20% solo por el turno actual
-    bool defend();
-
     bool flee(Character *target);
-    string getName();
-    int getHealth();
-    int getAttack();
-    int getDefense();
-    bool getIsPlayer();
-    int getSpeed();
-    string toString();
-    int getMaxHealth();
-    int getDefenseMode();
+    map<string, any> getData();
+
+    bool canDefend();
+    void defend();
     void nerfDefenseMode();
 };
 

@@ -6,21 +6,28 @@
 #include <string>
 #include <iostream>
 #include <utility>
-#include <algorithm>
+#include <map>
+#include <any>
 
 using namespace std;
 
 bool compareSpeed(Character *a, Character *b)
 {
-    return a->getSpeed() > b->getSpeed();
+    map<string, any> characterA = a->getData();
+    map<string, any> characterB = b->getData();
+
+    return any_cast<int>(characterA["speed"]) > any_cast<int>(characterB["speed"]);
 }
 
 Combat::Combat(vector<Character *> _participants)
 {
     participants = std::move(_participants);
+
     for (auto participant : participants)
     {
-        if (participant->getIsPlayer())
+        map<string, any> participantData = participant->getData();
+
+        if (any_cast<bool>(participantData["isPlayer"]))
         {
             partyMembers.push_back((Player *)participant);
         }
@@ -48,7 +55,9 @@ Combat::Combat()
 void Combat::addParticipant(Character *participant)
 {
     participants.push_back(participant);
-    if (participant->getIsPlayer())
+    map<string, any> participantData = participant->getData();
+
+    if (any_cast<bool>(participantData["isPlayer"]))
     {
         partyMembers.push_back((Player *)participant);
     }
@@ -63,28 +72,32 @@ void Combat::combatPrep()
     sort(participants.begin(), participants.end(), compareSpeed);
 }
 
-string Combat::toString()
-{
-    string result = "";
-    vector<Character *>::iterator it;
-    for (it = participants.begin(); it != participants.end(); it++)
-    {
-        result += (*it)->toString() + "\n";
-    }
-    cout << "====================" << endl;
-    return result;
-}
+// string Combat::toString()
+// {
+//     string result = "";
+//     vector<Character *>::iterator it;
+//     for (it = participants.begin(); it != participants.end(); it++)
+//     {
+//         result += (*it)->toString() + "\n";
+//     }
+//     cout << "====================" << endl;
+//     return result;
+// }
 
 Character *Combat::getTarget(Character *attacker)
 {
     vector<Character *>::iterator it;
     for (it = participants.begin(); it != participants.end(); it++)
     {
-        if ((*it)->getIsPlayer() != attacker->getIsPlayer())
+        map<string, any> itData = (*it)->getData();
+        map<string, any> attackerData = attacker->getData();
+
+        if (any_cast<bool>(itData["isPlayer"]) != any_cast<bool>(attackerData["isPlayer"]))
         {
             return *it;
         }
     }
+
     return nullptr;
 }
 
@@ -92,116 +105,89 @@ void Combat::doCombat()
 {
     cout << "Inicio del combate" << endl;
     combatPrep();
+    int round = 1;
 
-    while (participants.size() > 1)
+    while (enemies.size() > 0 && partyMembers.size() > 0)
     {
+        cout << "Round " << round << endl;
+
         vector<Character *>::iterator it = participants.begin();
+        registerActions(it);
+        executeActions(it);
 
-        while (it != participants.end())
-        {
-            Character *target = nullptr;
-
-            if ((*it)->getDefenseMode() > 0)
-            {
-                (*it)->nerfDefenseMode();
-            }
-
-            if ((*it)->getIsPlayer())
-            {
-                int action;
-
-                cout << "Es el turno de " << (*it)->getName() << endl;
-
-                cout << "¿Qué acción deseas realizar? 1 - Atacar | 2 - Defender: ";
-                cin >> action;
-
-                while (action)
-                {
-                    if (action == 1)
-                    {
-                        target = ((Player *)*it)->selectTarget(enemies);
-                        (*it)->doAttack(target);
-                    }
-                    else if (action == 2)
-                    {
-                        if (!(*it)->defend())
-                        {
-                            cout << "Ya te has defendido, es hora de atacar." << endl;
-                            (*it)->doAttack(target);
-                        }
-                        cout << (*it)->getName() << " ha elegido defender." << endl;
-                    }
-                    else
-                    {
-                        cout << "Accion invalida. Intentalo de nuevo." << endl;
-                    }
-
-                    cout << "¿Que accion deseas realizar? 1 - Atacar | 2 - Defender: ";
-                    cin >> action;
-                }
-            }
-            else
-            {
-                while (true)
-                {
-                    target = ((Enemy *)*it)->selectTarget(partyMembers);
-
-                    if ((*it)->getHealth() < 0.15 * (*it)->getMaxHealth())
-                    {
-                        if (rand() % 10 <= 3)
-                        {
-                            if (!(*it)->defend())
-                            {
-                                (*it)->doAttack(target);
-                                break;
-                            }
-                            else
-                            {
-                                cout << (*it)->getName() << " ha elegido defender." << endl;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        (*it)->doAttack(target);
-                        cout << (*it)->getName() << " ataco a " << target->getName() << " por " << (*it)->getAttack() << " puntos." << endl;
-                        break;
-                    }
-                }
-            }
-
-            if (target->getHealth() <= 0)
-            {
-                it = participants.erase(remove(participants.begin(), participants.end(), target), participants.end());
-
-                if (target->getIsPlayer())
-                {
-                    partyMembers.erase(remove(partyMembers.begin(), partyMembers.end(), target), partyMembers.end());
-                }
-                else
-                {
-                    cout << "You killed enemy " << target->getName() << endl;
-                    enemies.erase(remove(enemies.begin(), enemies.end(), target), enemies.end());
-                }
-            }
-            else
-            {
-                it++;
-            }
-        }
+        round++;
     }
 
-    if (participants.size() == 1)
+    if (enemies.empty())
     {
-        Character *remainingCharacter = participants[0];
-        if (remainingCharacter->getIsPlayer())
+        cout << "You win!" << endl;
+    }
+    else
+    {
+        cout << "You lose!" << endl;
+    }
+}
+
+void Combat::executeActions(vector<Character *>::iterator participant)
+{
+    while (!actionQueue.empty())
+    {
+        Action currentAction = actionQueue.top();
+        currentAction.action();
+        actionQueue.pop();
+
+        checkParticipantStatus(*participant);
+        checkParticipantStatus(currentAction.target);
+    }
+}
+
+void Combat::checkParticipantStatus(Character *participant)
+{
+    map<string, any> participantData = participant->getData();
+
+    if (any_cast<int>(participantData["health"]) <= 0)
+    {
+        if (any_cast<bool>(participantData["isPlayer"]))
         {
-            cout << "Game Over" << endl;
+            partyMembers.erase(remove(partyMembers.begin(), partyMembers.end(), participant), partyMembers.end());
         }
         else
         {
-            cout << "Victory" << endl;
+            enemies.erase(remove(enemies.begin(), enemies.end(), participant), enemies.end());
         }
+        participants.erase(remove(participants.begin(), participants.end(), participant), participants.end());
+    }
+}
+
+void Combat::registerActions(vector<Character *>::iterator participantIterator)
+{
+    while (participantIterator != participants.end())
+    {
+        map<string, any> participantData = (*participantIterator)->getData();
+
+        if (any_cast<int>(participantData["defenseMode"]) > 0)
+        {
+            if (any_cast<bool>(participantData["isPlayer"]))
+            {
+                ((Player *)*participantIterator)->nerfDefenseMode();
+            }
+            else
+            {
+                ((Enemy *)*participantIterator)->nerfDefenseMode();
+            }
+        }
+
+        if (any_cast<bool>(participantData["isPlayer"]))
+        {
+            Action playerAction = ((Player *)*participantIterator)->takeAction(enemies);
+            actionQueue.push(playerAction);
+        }
+        else
+        {
+            Action enemyAction = ((Enemy *)*participantIterator)->takeAction(partyMembers);
+            actionQueue.push(enemyAction);
+        }
+
+        participantIterator++;
     }
 }
