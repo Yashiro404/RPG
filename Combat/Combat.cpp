@@ -72,18 +72,6 @@ void Combat::combatPrep()
     sort(participants.begin(), participants.end(), compareSpeed);
 }
 
-// string Combat::toString()
-// {
-//     string result = "";
-//     vector<Character *>::iterator it;
-//     for (it = participants.begin(); it != participants.end(); it++)
-//     {
-//         result += (*it)->toString() + "\n";
-//     }
-//     cout << "====================" << endl;
-//     return result;
-// }
-
 Character *Combat::getTarget(Character *attacker)
 {
     vector<Character *>::iterator it;
@@ -103,17 +91,26 @@ Character *Combat::getTarget(Character *attacker)
 
 void Combat::doCombat()
 {
-    cout << "Inicio del combate" << endl;
+    cout << "Let's Get Nut!!" << endl;
+
     combatPrep();
+
     int round = 1;
 
     while (enemies.size() > 0 && partyMembers.size() > 0)
     {
-        cout << "Round " << round << endl;
+        cout << "==================" << endl;
+        cout << "Round " << round << " >>>" << endl;
 
         vector<Character *>::iterator it = participants.begin();
         registerActions(it);
+        cout << "------------------" << endl;
         executeActions(it);
+
+        if (enemies.empty() || partyMembers.empty())
+        {
+            break;
+        }
 
         round++;
     }
@@ -136,8 +133,16 @@ void Combat::executeActions(vector<Character *>::iterator participant)
         currentAction.action();
         actionQueue.pop();
 
+        if (currentAction.target != nullptr) {
+            checkParticipantStatus(currentAction.target);
+        }
+
         checkParticipantStatus(*participant);
-        checkParticipantStatus(currentAction.target);
+
+        if (enemies.empty() || partyMembers.empty())
+        {
+            break;
+        }
     }
 }
 

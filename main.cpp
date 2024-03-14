@@ -3,11 +3,10 @@
 #include "Enemy/Enemy.h"
 #include "Combat/Combat.h"
 
-
 int main() {
-    Player *player = new Player("Victor", 5, 10, 4, 3);
-    Enemy *enemy = new Enemy("Goblin", 15, 6, 2, 5, 10);
-    Enemy *enemy2 = new Enemy("Orc", 15, 6, 2, 5, 10);
+    Player *player = new Player("Goku", 60, 10, 4, 6);
+    Enemy *enemy = new Enemy("Freezer", 50, 6, 2, 5, 5);
+    Enemy *enemy2 = new Enemy("Cell", 50, 6, 2, 5, 5);
 
     vector<Character*> participants;
 

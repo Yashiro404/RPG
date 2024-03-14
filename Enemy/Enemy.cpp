@@ -27,6 +27,7 @@ void Enemy::takeDamage(int damage)
     health -= trueDamage;
 
     cout << name << " took " << trueDamage << " damage!" << endl;
+
     if (health <= 0)
     {
         cout << name << " has been defeated!" << endl;
@@ -77,6 +78,7 @@ Action Enemy::takeAction(vector<Player *> partyMembers)
             else
             {
                 cout << (any_cast<string>(enemyData["name"])) << " ha elegido defender." << endl;
+                currentAction.target = nullptr;
                 currentAction.action = [this]()
                 {
                     defend();

@@ -64,7 +64,7 @@ Character *Player::selectTarget(vector<Enemy *> possibleTargets)
 
     while (true)
     {
-        cout << "Enter the number corresponding to your target: ";
+        cout << "Select a target: ";
         cin >> selectedTarget;
 
         if (cin.fail() || selectedTarget < 0 || selectedTarget >= possibleTargets.size())
@@ -87,7 +87,7 @@ Action Player::takeAction(vector<Enemy *> enemies)
     Action currentAction;
     Character *target = nullptr;
     map<string, any> playerData = getData();
-    
+
     currentAction.speed = any_cast<int>(playerData["speed"]);
 
     do
@@ -96,12 +96,14 @@ Action Player::takeAction(vector<Enemy *> enemies)
 
         cout << "Select an action: " << endl
              << "1. Attack" << endl
-             << "2. Defend" << endl;
+             << "2. Defend" << endl
+             << "3. Escape" << endl;
         cin >> action;
 
         switch (action)
         {
         case 1:
+            cout << ">>>" << endl;
             target = selectTarget(enemies);
             currentAction.target = target;
             currentAction.action = [this, target]()
@@ -111,9 +113,10 @@ Action Player::takeAction(vector<Enemy *> enemies)
 
             break;
         case 2:
+            cout << ">>>" << endl;
             if (!canDefend())
             {
-                cout << "Ya te has defendido, es hora de atacar." << endl;
+                cout << "You've defended yourself, it's time to attack" << endl;
                 target = selectTarget(enemies);
                 currentAction.target = target;
                 currentAction.action = [this, target]()
@@ -123,11 +126,25 @@ Action Player::takeAction(vector<Enemy *> enemies)
             }
             else
             {
-                cout << "Has elegido defender." << endl;
+                cout << "You have chosen to defend" << endl;
+                currentAction.target = nullptr;
                 currentAction.action = [this]()
                 {
                     defend();
                 };
+            }
+            break;
+        case 3:
+            cout << ">>>" << endl;
+            if (rand() % 10 < 1)
+            {
+                cout << "You managed to escape!" << endl;
+                exit(0);
+            }
+            else
+            {
+                cout << "You failed to escape!" << endl;
+                currentAction.action = [this](){};
             }
             break;
         default:
