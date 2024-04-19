@@ -10,7 +10,7 @@
 
 using namespace std;
 
-Player::Player(string _name, int _health, int _attack, int _defense, int _speed) : Character(_name, _health, _attack, _defense, _speed, true, 0)
+Player::Player(string _name, int _health, int _attack, int _defense, int _speed) : Character(_name.c_str(), _health, _attack, _defense, _speed, true, 0)
 {
     level = 1;
     experience = 0;
@@ -90,15 +90,21 @@ Action Player::takeAction(vector<Enemy *> enemies)
 
     currentAction.speed = any_cast<int>(playerData["speed"]);
 
+    int action = 0;
+
     do
     {
-        int action = 0;
-
         cout << "Select an action: " << endl
              << "1. Attack" << endl
              << "2. Defend" << endl
              << "3. Escape" << endl;
-        cin >> action;
+
+        while (!(cin >> action))
+        {
+            cout << "Invalid input. Please enter a number." << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
 
         switch (action)
         {
@@ -144,16 +150,18 @@ Action Player::takeAction(vector<Enemy *> enemies)
             else
             {
                 cout << "You failed to escape!" << endl;
-                currentAction.action = [this](){};
+                currentAction.action = [this]() {};
             }
             break;
         default:
             cout << "Invalid action. Please enter a valid number." << endl;
+            action = 0;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
         }
 
         break;
-    } while (true);
+    } while (action < 1 || action > 3);
 
     return currentAction;
 }

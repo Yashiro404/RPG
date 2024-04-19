@@ -13,7 +13,7 @@ using namespace std;
 class Character
 {
 protected:
-    string name;
+    char name[31];
     int health;
     int attack;
     int defense;
@@ -22,7 +22,7 @@ protected:
     int defenseMode;
 
 public:
-    Character(string _name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _defenseMode);
+    Character(const char* _name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _defenseMode);
 
     virtual void doAttack(Character *target) = 0;
     virtual void takeDamage(int damage) = 0;

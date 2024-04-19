@@ -22,3 +22,6 @@ int main() {
     delete combat;
     return 0;
 }
+
+// RUN CODE:
+// g++ main.cpp Player/Player.cpp Enemy/Enemy.cpp Combat/Combat.cpp Combat/Action.cpp Character/Character.cpp -o main ; ./main.exe

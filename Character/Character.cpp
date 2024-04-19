@@ -5,12 +5,14 @@
 #include "Character.h"
 #include <map>
 #include <any>
+#include <string.h>
 
 using namespace std;
 
-Character::Character(string _name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _defenseMode)
+Character::Character(const char *_name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _defenseMode)
 {
-    name = _name;
+    strncpy(name, _name, 30);
+    name[30] = '\0';
     health = _health;
     attack = _attack;
     defense = _defense;
@@ -22,7 +24,8 @@ Character::Character(string _name, int _health, int _attack, int _defense, int _
 map<string, any> Character::getData()
 {
     map<string, any> data;
-    data["name"] = name;
+    data["name"] = string(name);
+    data["name_char"] = name;
     data["health"] = health;
     data["attack"] = attack;
     data["defense"] = defense;
