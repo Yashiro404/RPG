@@ -108,6 +108,8 @@ int loadPlayerData(Player &player)
 
 int main()
 {
+    vector<Character *> participants;
+
     Player player("Goku", 100, 800, 80, 100);
     Enemy enemy("Freezer", 50, 6, 2, 5);
     Enemy enemy2("Cell", 50, 6, 2, 5);
@@ -116,29 +118,29 @@ int main()
 
     int levelSaved = loadPlayerData(player);
 
+    participants.push_back(&player);
+
     if (levelSaved > 1)
     {
         combatLevel = levelSaved;
     }
 
-    vector<Character *> participants;
-
-    if (combatLevel > 1)
+    while (true)
     {
-        enemy.buffEnemy(combatLevel);
-        enemy2.buffEnemy(combatLevel);
+        if (combatLevel > 1)
+        {
+            enemy.buffEnemy(combatLevel);
+            enemy2.buffEnemy(combatLevel);
+        }
+
+        participants.push_back(&enemy);
+        participants.push_back(&enemy2);
+
+        Combat combat(participants, combatLevel);
+        combatLevel = combat.doCombat();
+
+        savePlayerData(player, combatLevel);
     }
-
-    participants.push_back(&player);
-    participants.push_back(&enemy);
-    participants.push_back(&enemy2);
-
-    Combat combat(participants, combatLevel);
-    combatLevel = combat.doCombat();
-
-    savePlayerData(player, combatLevel);
-
-    cout << "Nivel de combate: " << combatLevel << endl;
 
     return 0;
 }
