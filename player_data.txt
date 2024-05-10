@@ -1,0 +1,8 @@
+CombatLevel: 2
+attack: 810
+defense: 80
+defenseMode: 0
+health: 248
+isPlayer: true
+name: Goku
+speed: 100

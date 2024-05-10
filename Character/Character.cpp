@@ -6,13 +6,14 @@
 #include <map>
 #include <any>
 #include <string.h>
+#include <cstring>
+#include <iostream>
 
 using namespace std;
 
 Character::Character(const char *_name, int _health, int _attack, int _defense, int _speed, bool _isPlayer, int _defenseMode)
 {
-    strncpy(name, _name, 30);
-    name[30] = '\0';
+    name = _name;
     health = _health;
     attack = _attack;
     defense = _defense;
@@ -21,11 +22,10 @@ Character::Character(const char *_name, int _health, int _attack, int _defense, 
     defenseMode = _defenseMode;
 }
 
-map<string, any> Character::getData()
+map<string, any> Character::getData() const
 {
     map<string, any> data;
-    data["name"] = string(name);
-    data["name_char"] = name;
+    data["name"] = name;
     data["health"] = health;
     data["attack"] = attack;
     data["defense"] = defense;
@@ -34,6 +34,22 @@ map<string, any> Character::getData()
     data["defenseMode"] = defenseMode;
 
     return data;
+}
+
+void Character::setData(const map<string, any> &data)
+{
+    // for (const auto &pair : data)
+    // {
+    //     cout << "Key: " << pair.first << ", Value type: " << pair.second.type().name() << endl;
+    // }
+
+    name = any_cast<string>(data.at("name"));
+    health = any_cast<int>(data.at("health"));
+    attack = any_cast<int>(data.at("attack"));
+    defense = any_cast<int>(data.at("defense"));
+    speed = any_cast<int>(data.at("speed"));
+    isPlayer = any_cast<bool>(data.at("isPlayer"));
+    defenseMode = any_cast<int>(data.at("defenseMode"));
 }
 
 bool Character::flee(Character *target)

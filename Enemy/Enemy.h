@@ -13,18 +13,21 @@
 
 class Player;
 
-class Enemy: public Character{
+class Enemy : public Character
+{
 private:
-    int experience;
+    int expGift;
+    int healthOG;
+
 public:
-    Enemy(string _name, int _health, int _attack, int _defense, int _speed, int _experience);
+    Enemy(string _name, int _health, int _attack, int _defense, int _speed);
     void doAttack(Character *target) override;
     void takeDamage(int damage) override;
-    Character* selectTarget(vector<Player*> possibleTargets);
-    Action takeAction(vector<Player*> partyMembers);
+    Character *selectTarget(vector<Player *> possibleTargets);
+    Action takeAction(vector<Player *> partyMembers);
 
-    int getExperience();
+    int getExpGift();
+    void buffEnemy(int level);
 };
 
-
-#endif //RPG_ENEMY_H
+#endif // RPG_ENEMY_H

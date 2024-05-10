@@ -14,6 +14,7 @@ Player::Player(string _name, int _health, int _attack, int _defense, int _speed)
 {
     level = 1;
     experience = 0;
+    requiredExp = 0;
 }
 
 void Player::doAttack(Character *target)
@@ -35,19 +36,56 @@ void Player::takeDamage(int damage)
     }
 }
 
-void Player::levelUp()
-{
-    level++;
-}
-
-void Player::gainExperience(int exp)
+void Player::buffPlayer(int exp)
 {
     experience += exp;
 
-    if (experience >= 100)
+    if (experience >= requiredExp)
     {
-        levelUp();
-        experience = 100 - experience;
+        level++;
+        experience = experience - requiredExp;
+        requiredExp += 50;
+
+        int action = 0;
+
+        do
+        {
+            cout << "Select a stat to improve: " << endl
+                 << "1. Damage (" << attack << ") > " << (attack + 10) << endl
+                 << "2. Defense (" << defense << ") > " << (defense + 10) << endl
+                 << "3. Health (" << health << ") > " << (health + 10) << endl
+                 << "4. Speed (" << speed << ") > " << (speed + 10) << endl;
+
+            while (!(cin >> action))
+            {
+                cout << "Invalid input. Please enter a number." << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+
+            switch (action)
+            {
+            case 1:
+                attack += 10;
+                break;
+            case 2:
+                defense += 10;
+                break;
+            case 3:
+                health += 10;
+                break;
+            case 4:
+                speed += 10;
+                break;
+            default:
+                cout << "Invalid action. Please enter a valid number." << endl;
+                action = 0;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                continue;
+            }
+
+            break;
+        } while (action < 1 || action > 4);
     }
 }
 

@@ -19,8 +19,9 @@ bool compareSpeed(Character *a, Character *b)
     return any_cast<int>(characterA["speed"]) > any_cast<int>(characterB["speed"]);
 }
 
-Combat::Combat(vector<Character *> _participants)
+Combat::Combat(vector<Character *> _participants, int combatLevel)
 {
+    level = combatLevel;
     participants = std::move(_participants);
 
     for (auto participant : participants)
@@ -45,11 +46,6 @@ Combat::Combat(vector<Player *> _partyMembers, vector<Enemy *> _enemies)
     participants = vector<Character *>();
     participants.insert(participants.end(), partyMembers.begin(), partyMembers.end());
     participants.insert(participants.end(), enemies.begin(), enemies.end());
-}
-
-Combat::Combat()
-{
-    participants = vector<Character *>();
 }
 
 void Combat::addParticipant(Character *participant)
@@ -89,13 +85,13 @@ Character *Combat::getTarget(Character *attacker)
     return nullptr;
 }
 
-void Combat::doCombat()
+int Combat::doCombat()
 {
-    cout << "Let's Get Nut!!" << endl;
-
+    cout << "----LEVEL " << level << "----" << endl;
     combatPrep();
 
     int round = 1;
+    int expTotal = 0;
 
     while (enemies.size() > 0 && partyMembers.size() > 0)
     {
@@ -105,7 +101,7 @@ void Combat::doCombat()
         vector<Character *>::iterator it = participants.begin();
         registerActions(it);
         cout << "------------------" << endl;
-        executeActions(it);
+        expTotal += executeActions(it);
 
         if (enemies.empty() || partyMembers.empty())
         {
@@ -118,23 +114,36 @@ void Combat::doCombat()
     if (enemies.empty())
     {
         cout << "You win!" << endl;
+        level++;
+
+        for (auto player : partyMembers)
+        {
+            player->buffPlayer(expTotal);
+        }
+
+        return level;
     }
     else
     {
         cout << "You lose!" << endl;
+
+        return 0;
     }
 }
 
-void Combat::executeActions(vector<Character *>::iterator participant)
+int Combat::executeActions(vector<Character *>::iterator participant)
 {
+    int expWin = 0;
+
     while (!actionQueue.empty())
     {
         Action currentAction = actionQueue.top();
         currentAction.action();
         actionQueue.pop();
 
-        if (currentAction.target != nullptr) {
-            checkParticipantStatus(currentAction.target);
+        if (currentAction.target != nullptr)
+        {
+            expWin = checkParticipantStatus(currentAction.target);
         }
 
         checkParticipantStatus(*participant);
@@ -144,11 +153,14 @@ void Combat::executeActions(vector<Character *>::iterator participant)
             break;
         }
     }
+
+    return expWin;
 }
 
-void Combat::checkParticipantStatus(Character *participant)
+int Combat::checkParticipantStatus(Character *participant)
 {
     map<string, any> participantData = participant->getData();
+    int expGift = 0;
 
     if (any_cast<int>(participantData["health"]) <= 0)
     {
@@ -158,10 +170,15 @@ void Combat::checkParticipantStatus(Character *participant)
         }
         else
         {
+            Enemy *enemyParticipant = dynamic_cast<Enemy *>(participant);
+            expGift = enemyParticipant->getExpGift();
+
             enemies.erase(remove(enemies.begin(), enemies.end(), participant), enemies.end());
         }
         participants.erase(remove(participants.begin(), participants.end(), participant), participants.end());
     }
+
+    return expGift;
 }
 
 void Combat::registerActions(vector<Character *>::iterator participantIterator)

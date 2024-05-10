@@ -1,6 +1,7 @@
 //
 // Created by Victor Navarro on 15/02/24.
 //
+
 #pragma once
 #ifndef RPG_PLAYER_H
 #define RPG_PLAYER_H
@@ -13,13 +14,10 @@ class Enemy;
 
 class Player : public Character
 {
-    // TODO: Implement Classes (Mage, Warrior, Rogue, etc..)
-    // TODO: Implement Inventory
 private:
     int level;
     int experience;
-
-    void levelUp();
+    int requiredExp;
 
 public:
     Player(string _name, int _health, int _attack, int _defense, int _speed);
@@ -28,9 +26,7 @@ public:
     Character *selectTarget(vector<Enemy *> possibleTargets);
     Action takeAction(vector<Enemy *> enemies);
 
-    void gainExperience(int exp);
-
-    // TODO: Implement use object
+    void buffPlayer(int exp);
 };
 
 #endif // RPG_PLAYER_H

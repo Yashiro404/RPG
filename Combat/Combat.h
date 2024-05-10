@@ -13,22 +13,23 @@
 class Combat
 {
 private:
+    int level;
+
     vector<Character *> participants;
     vector<Player *> partyMembers;
     vector<Enemy *> enemies;
     priority_queue<Action> actionQueue;
     void registerActions(vector<Character *>::iterator participant);
-    void executeActions(vector<Character *>::iterator participant);
-    void checkParticipantStatus(Character *participant);
+    int executeActions(vector<Character *>::iterator participant);
+    int checkParticipantStatus(Character *participant);
 
     void combatPrep();
     Character *getTarget(Character *attacker);
 
 public:
-    Combat(vector<Character *> _participants);
+    Combat(vector<Character *> _participants, int combatLevel);
     Combat(vector<Player *> _partyMembers, vector<Enemy *> _enemies);
-    Combat();
-    void doCombat();
+    int doCombat();
     void addParticipant(Character *participant);
 };
 

@@ -11,9 +11,10 @@
 using namespace std;
 using namespace combat_utils;
 
-Enemy::Enemy(string _name, int _health, int _attack, int _defense, int _speed, int _experience) : Character(_name.c_str(), _health, _attack, _defense, _speed, false, 0)
+Enemy::Enemy(string _name, int _health, int _attack, int _defense, int _speed) : Character(_name.c_str(), _health, _attack, _defense, _speed, false, 0)
 {
-    experience = _experience;
+    expGift = 200;
+    healthOG = _health;
 }
 
 void Enemy::doAttack(Character *target)
@@ -34,9 +35,9 @@ void Enemy::takeDamage(int damage)
     }
 }
 
-int Enemy::getExperience()
+int Enemy::getExpGift()
 {
-    return experience;
+    return expGift;
 }
 
 Character *Enemy::selectTarget(vector<Player *> possibleTargets)
@@ -53,6 +54,7 @@ Character *Enemy::selectTarget(vector<Player *> possibleTargets)
             target = character;
         }
     }
+
     return target;
 }
 
@@ -62,7 +64,7 @@ Action Enemy::takeAction(vector<Player *> partyMembers)
     map<string, any> enemyData = getData();
     currentAction.speed = any_cast<int>(enemyData["speed"]);
 
-    if ((any_cast<int>(enemyData["health"]) < (0.15 * any_cast<int>(enemyData["health"]))))
+    if ((any_cast<int>(enemyData["health"]) < (0.15 * healthOG)))
     {
         if (rand() % 10 <= 3)
         {
@@ -97,4 +99,12 @@ Action Enemy::takeAction(vector<Player *> partyMembers)
     }
 
     return currentAction;
+}
+
+void Enemy::buffEnemy(int level)
+{
+    attack += (10 * level);
+    defense += (10 * level);
+    health += (10 * level);
+    speed += (10 * level);
 }
