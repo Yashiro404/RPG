@@ -105,7 +105,7 @@ int main()
     int combatLevel = 1;
     vector<Character *> participants;
 
-    Player player("Goku", 10000, 100, 80, 100);
+    Player player("Goku", 1000, 80, 80, 100);
     int levelSaved = loadPlayerData(player);
 
     participants.push_back(&player);
