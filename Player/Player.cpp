@@ -16,7 +16,7 @@ Player::Player(string _name, int _health, int _attack, int _defense, int _speed)
     experience = 0;
     requiredExp = 0;
     coins = 0;
-    healthOG = 0;
+    healthOG = _health;
 }
 
 void Player::doAttack(Character *target)
