@@ -113,12 +113,19 @@ int Combat::doCombat()
 
     if (enemies.empty())
     {
-        cout << "You win!" << endl;
+        cout << "You win! you win 2 coins too!" << endl;
         level++;
 
         for (auto player : partyMembers)
         {
             player->buffPlayer(expTotal);
+            int res = player->foreignHelp();
+
+            if (res == 666)
+            {
+                level += 6;
+                player->demonMode();
+            }
         }
 
         return level;

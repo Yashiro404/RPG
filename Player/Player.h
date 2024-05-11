@@ -18,6 +18,8 @@ private:
     int level;
     int experience;
     int requiredExp;
+    int coins;
+    int healthOG;
 
 public:
     Player(string _name, int _health, int _attack, int _defense, int _speed);
@@ -27,6 +29,8 @@ public:
     Action takeAction(vector<Enemy *> enemies);
 
     void buffPlayer(int exp);
+    int foreignHelp();
+    void demonMode();
 };
 
 #endif // RPG_PLAYER_H

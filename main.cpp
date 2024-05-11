@@ -9,116 +9,128 @@ using namespace std;
 
 void savePlayerData(const Character &player, int nivel)
 {
-    std::ofstream archivo("player_data.txt");
-    if (archivo.is_open())
+    ofstream dataFile("player_data.txt");
+    if (dataFile.is_open())
     {
-        // Obtener los datos del jugador usando la función getData
         map<string, any> playerData = player.getData();
 
-        // Guardar el nivel
-        archivo << "CombatLevel: " << nivel << endl;
+        dataFile << "CombatLevel: " << nivel << endl;
 
-        // Guardar los datos del jugador
         for (const auto &[key, value] : playerData)
         {
-            archivo << key << ": ";
+            dataFile << key << ": ";
             if (value.type() == typeid(string))
             {
-                archivo << any_cast<string>(value);
+                dataFile << any_cast<string>(value);
             }
             else if (value.type() == typeid(int))
             {
-                archivo << any_cast<int>(value);
+                dataFile << any_cast<int>(value);
             }
             else if (value.type() == typeid(bool))
             {
-                archivo << (any_cast<bool>(value) ? "true" : "false");
+                dataFile << (any_cast<bool>(value) ? "true" : "false");
             }
-            // Agrega más casos según los tipos de datos que esperas manejar
 
-            archivo << endl;
+            dataFile << endl;
         }
 
-        archivo.close();
+        dataFile.close();
     }
     else
     {
-        cout << "Sin datos guardados" << endl;
+        cout << "404" << endl;
     }
 }
 
 int loadPlayerData(Player &player)
 {
-    ifstream archivo("player_data.txt");
-    if (archivo.is_open())
+    ifstream dataFile("player_data.txt");
+    if (dataFile.is_open())
     {
-        string linea;
+        string line;
         int level = 0;
         map<string, any> data;
 
-        while (getline(archivo, linea))
+        while (getline(dataFile, line))
         {
-            istringstream iss(linea);
-            string clave, valor;
+            istringstream iss(line);
+            string key, value;
 
-            if (getline(iss, clave, ':') && getline(iss, valor))
+            if (getline(iss, key, ':') && getline(iss, value))
             {
-                // Eliminar espacios en blanco al principio y al final de la clave y el valor
-                clave.erase(0, clave.find_first_not_of(" \t\n\r\f\v"));
-                clave.erase(clave.find_last_not_of(" \t\n\r\f\v") + 1);
-                valor.erase(0, valor.find_first_not_of(" \t\n\r\f\v"));
-                valor.erase(valor.find_last_not_of(" \t\n\r\f\v") + 1);
+                key.erase(0, key.find_first_not_of(" \t\n\r\f\v"));
+                key.erase(key.find_last_not_of(" \t\n\r\f\v") + 1);
+                value.erase(0, value.find_first_not_of(" \t\n\r\f\v"));
+                value.erase(value.find_last_not_of(" \t\n\r\f\v") + 1);
 
-                if (clave == "CombatLevel")
+                if (key == "CombatLevel")
                 {
-                    level = std::stoi(valor);
+                    level = stoi(value);
                 }
                 else
                 {
-                    if (clave == "health" || clave == "attack" || clave == "defense" || clave == "speed" || clave == "defenseMode")
+                    if (key == "health" || key == "attack" || key == "defense" || key == "speed" || key == "defenseMode")
                     {
-                        // Asigna el valor a la clave en el mapa de datos
-                        data[clave] = std::stoi(valor);
+                        data[key] = stoi(value);
                     }
-                    else if (clave == "isPlayer")
+                    else if (key == "isPlayer")
                     {
-                        data[clave] = (valor == "true");
+                        data[key] = (value == "true");
                     }
                     else
                     {
-                        data[clave] = valor;
+                        data[key] = value;
                     }
                 }
             }
         }
 
-        // Asignar los datos cargados al jugador
         player.setData(data);
 
-        archivo.close();
+        dataFile.close();
 
         return level;
     }
     else
     {
-        cout << "Sin datos" << endl;
-        return 0; // Retorna 0 para indicar un error
+        cout << "404" << endl;
+
+        return 0;
     }
 }
 
 int main()
 {
+    int combatLevel = 1;
     vector<Character *> participants;
 
-    Player player("Goku", 100, 800, 80, 100);
-    Enemy enemy("Freezer", 50, 6, 2, 5);
-    Enemy enemy2("Cell", 50, 6, 2, 5);
-
-    int combatLevel = 1;
-
+    Player player("Goku", 10000, 100, 80, 100);
     int levelSaved = loadPlayerData(player);
 
     participants.push_back(&player);
+
+    vector<Enemy> enemiesData = {
+        Enemy("Saibaman", 40, 30, 50, 50),
+        Enemy("Vegeta", 95, 110, 90, 110),
+        Enemy("Piccolo", 85, 100, 95, 80),
+        Enemy("Gohan", 90, 105, 85, 90),
+        Enemy("Krillin", 75, 90, 70, 70),
+        Enemy("Yamcha", 70, 85, 65, 75),
+        Enemy("Tien", 80, 95, 75, 85),
+        Enemy("Chiaotzu", 60, 80, 50, 60),
+        Enemy("Master Roshi", 65, 75, 60, 55),
+        Enemy("Bulma", 50, 70, 40, 65),
+        Enemy("Trunks", 92, 115, 92, 105),
+        Enemy("Goten", 88, 110, 88, 100),
+        Enemy("Android 18", 95, 105, 95, 95),
+        Enemy("Android 17", 95, 105, 95, 95),
+        Enemy("Frieza", 110, 125, 100, 120),
+        Enemy("Cell", 105, 120, 110, 115),
+        Enemy("Majin Buu", 120, 130, 115, 105),
+        Enemy("Beerus", 150, 140, 130, 150),
+        Enemy("Whis", 160, 150, 140, 160),
+        Enemy("Jiren", 200, 200, 200, 200)};
 
     if (levelSaved > 1)
     {
@@ -127,17 +139,28 @@ int main()
 
     while (true)
     {
-        if (combatLevel > 1)
-        {
-            enemy.buffEnemy(combatLevel);
-            enemy2.buffEnemy(combatLevel);
-        }
+        srand(time(nullptr));
 
-        participants.push_back(&enemy);
-        participants.push_back(&enemy2);
+        for (int i = 0; i < 4; ++i)
+        {
+            int randomIndex = rand() % enemiesData.size();
+            Enemy *enemy = new Enemy(enemiesData[randomIndex]);
+
+            if (combatLevel > 1)
+            {
+                enemy->buffEnemy(combatLevel);
+            }
+
+            participants.push_back(enemy);
+        }
 
         Combat combat(participants, combatLevel);
         combatLevel = combat.doCombat();
+
+        if (combatLevel == 0)
+        {
+            break;
+        }
 
         savePlayerData(player, combatLevel);
     }

@@ -15,6 +15,8 @@ Player::Player(string _name, int _health, int _attack, int _defense, int _speed)
     level = 1;
     experience = 0;
     requiredExp = 0;
+    coins = 0;
+    healthOG = 0;
 }
 
 void Player::doAttack(Character *target)
@@ -53,7 +55,7 @@ void Player::buffPlayer(int exp)
             cout << "Select a stat to improve: " << endl
                  << "1. Damage (" << attack << ") > " << (attack + 10) << endl
                  << "2. Defense (" << defense << ") > " << (defense + 10) << endl
-                 << "3. Health (" << health << ") > " << (health + 10) << endl
+                 << "3. Health (" << healthOG << ") > " << (healthOG + 10) << endl
                  << "4. Speed (" << speed << ") > " << (speed + 10) << endl;
 
             while (!(cin >> action))
@@ -72,7 +74,7 @@ void Player::buffPlayer(int exp)
                 defense += 10;
                 break;
             case 3:
-                health += 10;
+                healthOG += 10;
                 break;
             case 4:
                 speed += 10;
@@ -87,6 +89,81 @@ void Player::buffPlayer(int exp)
             break;
         } while (action < 1 || action > 4);
     }
+}
+
+int Player::foreignHelp()
+{
+    coins += 2;
+
+    char res;
+
+    cout << "Now, you have " << coins << ", Do you want some help? (y/n)";
+
+    while (!(cin >> res))
+    {
+        cout << "Invalid input. Please enter 'y' or 'n'." << endl;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    if (res == 'y')
+    {
+        int action = 0;
+
+        do
+        {
+            cout << "Select an option: " << endl
+                 << "1. 50 Health recovery (5 coins)" << endl
+                 << "2. Active defense mode (2 coins)" << endl
+                 << "3. X- DONT SELECT THIS -X (10 coins)" << endl
+                 << "4. Exit" << endl;
+
+            while (!(cin >> action))
+            {
+                cout << "Invalid input. Please enter a number." << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+
+            switch (action)
+            {
+            case 1:
+                health += 50;
+                coins -= 5;
+                break;
+            case 2:
+                Character::defend();
+                coins -= 2;
+                break;
+            case 3:
+                coins -= 10;
+                return 666;
+                break;
+            case 4:
+                break;
+            default:
+                cout << "Invalid action. Please enter a valid number." << endl;
+                action = 0;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                continue;
+            }
+
+            break;
+        } while (action < 1 || action > 4);
+    } 
+
+    return 0;
+}
+
+void Player::demonMode()
+{
+    cout << "HAVE FUN!" << endl;
+
+    attack = 666;
+    defense = 666;
+    health = 666;
+    healthOG += health;
+    speed = 666;
 }
 
 Character *Player::selectTarget(vector<Enemy *> possibleTargets)
