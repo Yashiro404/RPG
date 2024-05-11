@@ -79,7 +79,7 @@ Action Enemy::takeAction(vector<Player *> partyMembers)
             }
             else
             {
-                cout << (any_cast<string>(enemyData["name"])) << " ha elegido defender." << endl;
+                cout << (any_cast<string>(enemyData["name"])) << " has defended." << endl;
                 currentAction.target = nullptr;
                 currentAction.action = [this]()
                 {

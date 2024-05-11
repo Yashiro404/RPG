@@ -42,10 +42,10 @@ void Player::buffPlayer(int exp)
 {
     experience += exp;
 
-    if (experience >= requiredExp)
+    while (experience >= requiredExp)
     {
         level++;
-        experience = experience - requiredExp;
+        experience -= requiredExp;
         requiredExp += 50;
 
         int action = 0;
@@ -97,7 +97,7 @@ int Player::foreignHelp()
 
     char res;
 
-    cout << "Now, you have " << coins << ", Do you want some help? (y/n)";
+    cout << "Now, you have " << coins << ", Do you want some help? (y/n): ";
 
     while (!(cin >> res))
     {
@@ -150,7 +150,7 @@ int Player::foreignHelp()
 
             break;
         } while (action < 1 || action > 4);
-    } 
+    }
 
     return 0;
 }
