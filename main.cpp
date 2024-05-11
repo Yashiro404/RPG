@@ -39,7 +39,8 @@ void savePlayerData(const Character &player, int nivel)
     }
     else
     {
-        cout << "404" << endl;
+        cout << "No saved data, creating new game" << endl;
+        cout << " " << endl;
     }
 }
 
@@ -94,7 +95,8 @@ int loadPlayerData(Player &player)
     }
     else
     {
-        cout << "404" << endl;
+        cout << "No saved data, creating new game" << endl;
+        cout << " " << endl;
 
         return 0;
     }
@@ -111,26 +113,26 @@ int main()
     participants.push_back(&player);
 
     vector<Enemy> enemiesData = {
-        Enemy("Saibaman", 40, 30, 50, 50),
-        Enemy("Vegeta", 95, 110, 90, 110),
-        Enemy("Piccolo", 85, 100, 95, 80),
-        Enemy("Gohan", 90, 105, 85, 90),
-        Enemy("Krillin", 75, 90, 70, 70),
-        Enemy("Yamcha", 70, 85, 65, 75),
-        Enemy("Tien", 80, 95, 75, 85),
-        Enemy("Chiaotzu", 60, 80, 50, 60),
-        Enemy("Master Roshi", 65, 75, 60, 55),
-        Enemy("Bulma", 50, 70, 40, 65),
-        Enemy("Trunks", 92, 115, 92, 105),
-        Enemy("Goten", 88, 110, 88, 100),
-        Enemy("Android 18", 95, 105, 95, 95),
-        Enemy("Android 17", 95, 105, 95, 95),
-        Enemy("Frieza", 110, 125, 100, 120),
-        Enemy("Cell", 105, 120, 110, 115),
-        Enemy("Majin Buu", 120, 130, 115, 105),
-        Enemy("Beerus", 150, 140, 130, 150),
-        Enemy("Whis", 160, 150, 140, 160),
-        Enemy("Jiren", 200, 200, 200, 200)};
+        Enemy("Saibaman", 40, 30, 5, 50),
+        Enemy("Vegeta", 95, 110, 9, 110),
+        Enemy("Piccolo", 85, 100, 9, 80),
+        Enemy("Gohan", 90, 105, 8, 90),
+        Enemy("Krillin", 75, 90, 7, 70),
+        Enemy("Yamcha", 70, 85, 6, 75),
+        Enemy("Tien", 80, 95, 7, 85),
+        Enemy("Chiaotzu", 60, 80, 5, 60),
+        Enemy("Master Roshi", 65, 75, 6, 55),
+        Enemy("Bulma", 50, 70, 4, 65),
+        Enemy("Trunks", 92, 115, 9, 105),
+        Enemy("Goten", 88, 110, 8, 100),
+        Enemy("Android 18", 95, 105, 9, 95),
+        Enemy("Android 17", 95, 105, 9, 95),
+        Enemy("Frieza", 110, 125, 10, 120),
+        Enemy("Cell", 105, 120, 10, 115),
+        Enemy("Majin Buu", 120, 130, 15, 105),
+        Enemy("Beerus", 150, 140, 10, 150),
+        Enemy("Whis", 160, 150, 10, 160),
+        Enemy("Jiren", 200, 200, 20, 200)};
 
     if (levelSaved > 1)
     {
